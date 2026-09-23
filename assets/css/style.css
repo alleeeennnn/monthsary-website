@@ -1,0 +1,348 @@
+/* ============================================================
+   Monthsary Website — shared design system
+   Base: Apple design system (.cline/skills/design-md/design-md/apple)
+   Adaptation (per design-md skill): romantic palette swap —
+   deep plum canvas + a single rose accent replacing Action Blue.
+   SF Pro substituted with Inter (line-height tightened 1.47 → 1.44,
+   per the DESIGN.md font-substitution rule). Playfair Display italic
+   is used ONLY as the romantic display accent.
+   ============================================================ */
+
+:root {
+  /* Canvas & surfaces (romantic adaptation of Apple's tile system) */
+  --canvas: #14060d;
+  --canvas-2: #24091a;
+  --surface-tile: #2a0f1d;
+  --surface-glass: rgba(255, 240, 246, 0.06);
+  --surface-glass-strong: rgba(255, 240, 246, 0.1);
+  --hairline: rgba(255, 220, 235, 0.14);
+
+  /* Ink */
+  --ink: #fff5f7;
+  --ink-80: rgba(255, 240, 246, 0.82);
+  --ink-muted: rgba(255, 226, 238, 0.58);
+
+  /* The ONE accent (Apple's "single quiet blue" → rose) */
+  --primary: #ff4d6d;
+  --primary-focus: #ff6b86;
+  --blush: #ffb3c1;
+  --on-primary: #2b0a14;
+
+  /* Radii (Apple scale) */
+  --radius-sm: 8px;
+  --radius-md: 11px;
+  --radius-lg: 18px;
+  --pill: 9999px;
+
+  /* Spacing (Apple scale) */
+  --sp-xs: 8px;
+  --sp-sm: 12px;
+  --sp-md: 17px;
+  --sp-lg: 24px;
+  --sp-xl: 32px;
+  --sp-xxl: 48px;
+  --sp-section: 80px;
+
+  /* Type (Apple display sizes, Inter substitution) */
+  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-romantic: "Playfair Display", Georgia, serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { min-height: 100%; }
+
+body {
+  font-family: var(--font-body);
+  line-height: 1.44;                 /* Apple substitution rule */
+  color: var(--ink);
+  background:
+    radial-gradient(1200px 800px at 80% -10%, rgba(255, 77, 109, 0.14), transparent 60%),
+    radial-gradient(1000px 700px at 10% 110%, rgba(255, 179, 193, 0.1), transparent 60%),
+    linear-gradient(160deg, var(--canvas-2) 0%, var(--canvas) 55%, #0d0309 100%);
+  overflow-x: hidden;
+}
+
+/* --- 3D canvas layer (threejs-3d skill rules) --- */
+#scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  display: block;
+}
+
+main, .hero, footer { position: relative; z-index: 1; }
+
+/* --- Glass card (Apple backdrop-blur + hairline, no heavy shadows) --- */
+.glass {
+  background: var(--surface-glass);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+}
+
+/* --- Type --- */
+.eyebrow {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--blush);
+}
+.romantic {
+  font-family: var(--font-romantic);
+  font-style: italic;
+  font-weight: 600;
+}
+/* --- Buttons (Apple pill, single accent) --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-xs);
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--pill);
+  padding: 11px 22px;
+  color: var(--on-primary);
+  background: var(--primary);
+  transition: background 0.18s ease, transform 0.18s ease;
+}
+.btn:hover { background: var(--primary-focus); transform: translateY(-1px); }
+.btn:active { transform: translateY(0) scale(0.98); }
+.btn:focus-visible { outline: 2px solid var(--blush); outline-offset: 3px; }
+.btn-ghost {
+  background: transparent;
+  color: var(--blush);
+  border: 1px solid var(--hairline);
+}
+.btn-ghost:hover { background: var(--surface-glass); color: var(--ink); }
+
+/* --- Fine print (Apple fine-print voice) --- */
+.fine-print { font-size: 12px; color: var(--ink-muted); letter-spacing: -0.01em; }
+
+/* --- Popup overlay (unlock celebration) --- */
+.popup {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-lg);
+  background: rgba(13, 3, 9, 0.55);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+.popup.show { opacity: 1; visibility: visible; }
+.popup-card {
+  max-width: 420px;
+  width: 100%;
+  padding: var(--sp-xxl) var(--sp-xl);
+  text-align: center;
+  transform: translateY(24px) scale(0.96);
+  transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.25, 1.2);
+}
+.popup.show .popup-card { transform: translateY(0) scale(1); }
+.popup-heart {
+  font-size: 64px;
+  line-height: 1;
+  margin-bottom: var(--sp-lg);
+  animation: heartbeat 1.4s ease-in-out infinite;
+  filter: drop-shadow(0 6px 24px rgba(255, 77, 109, 0.45));
+}
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  14% { transform: scale(1.18); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.14); }
+  56% { transform: scale(1); }
+}
+.popup-card h2 {
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.37px;
+  line-height: 1.1;
+  margin-bottom: var(--sp-sm);
+}
+.popup-card p { color: var(--ink-muted); font-size: 17px; margin-bottom: var(--sp-xl); }
+/* --- Lock page --- */
+.lock-wrap {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-lg);
+  padding: var(--sp-lg);
+}
+.lock-card {
+  width: 100%;
+  max-width: 400px;
+  padding: var(--sp-xxl) var(--sp-xl);
+  text-align: center;
+}
+.lock-card h1 {
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  line-height: 1.15;
+  margin: var(--sp-xs) 0 var(--sp-sm);
+}
+.lock-card h1 .romantic { color: var(--blush); font-size: 34px; }
+.lock-sub { color: var(--ink-muted); font-size: 15px; margin-bottom: var(--sp-xl); }
+.lock-sub .clue {
+  display: inline-block;
+  margin-top: 4px;
+  color: var(--blush);
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+/* Digit boxes */
+.digits { display: flex; justify-content: center; gap: var(--sp-sm); margin-bottom: var(--sp-xl); }
+.digit {
+  width: 46px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface-glass);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.digit.filled { border-color: var(--primary); background: var(--surface-glass-strong); color: var(--blush); }
+.digits.shake { animation: shake 0.5s ease; }
+.digits.shake .digit { border-color: #ff8080; background: rgba(255, 77, 109, 0.12); }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(9px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(4px); }
+}
+
+/* Keypad */
+.keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--sp-sm); max-width: 280px; margin: 0 auto; }
+.key {
+  height: 56px;
+  font-family: var(--font-body);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--ink);
+  background: var(--surface-glass);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+}
+.key:hover { background: var(--surface-glass-strong); border-color: rgba(255, 179, 193, 0.35); }
+.key:active { transform: scale(0.95); background: rgba(255, 77, 109, 0.18); border-color: var(--primary); }
+.key.util { color: var(--blush); font-size: 17px; }
+/* --- Main page hero --- */
+.hero {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--sp-lg);
+  padding: var(--sp-xxl) var(--sp-lg);
+}
+.hero .display {
+  font-size: clamp(40px, 7vw, 56px);   /* Apple hero-display 56px, fluid */
+  font-weight: 600;
+  line-height: 1.07;
+  letter-spacing: -0.28px;
+  max-width: 980px;                     /* Apple text-section width */
+}
+.hero .display .romantic {
+  font-size: clamp(44px, 8vw, 66px);
+  color: var(--blush);
+  display: inline-block;
+}
+.hero .display #months-num {
+  background: linear-gradient(120deg, var(--primary), var(--blush));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--primary);
+  font-variant-numeric: tabular-nums;
+}
+.hero .sub { color: var(--ink-muted); font-size: 18px; font-weight: 300; max-width: 560px; }
+
+/* Live counter chips */
+.counter { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--sp-sm); }
+.chip {
+  min-width: 86px;
+  padding: var(--sp-sm) var(--sp-md);
+  background: var(--surface-glass);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+.chip .num {
+  display: block;
+  font-size: 26px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+}
+.chip .label {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+}
+
+/* Letter card */
+.letter { max-width: 620px; width: 100%; padding: var(--sp-xl); text-align: left; margin-top: var(--sp-md); }
+.letter h3 { font-size: 21px; font-weight: 600; margin-bottom: var(--sp-md); }
+.letter h3 .romantic { color: var(--blush); }
+.letter p { font-size: 17px; color: var(--ink-80); margin-bottom: var(--sp-md); }
+.letter .sign { color: var(--blush); font-size: 17px; }
+
+footer { padding: var(--sp-lg) var(--sp-lg) var(--sp-xl); text-align: center; }
+
+/* --- Entrance animation --- */
+.fade-up { opacity: 0; transform: translateY(18px); animation: fadeUp 0.9s ease forwards; }
+.fade-up.d1 { animation-delay: 0.1s; }
+.fade-up.d2 { animation-delay: 0.25s; }
+.fade-up.d3 { animation-delay: 0.4s; }
+.fade-up.d4 { animation-delay: 0.55s; }
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+/* --- Responsive --- */
+@media (max-width: 480px) {
+  .digit { width: 40px; height: 52px; font-size: 20px; }
+  .lock-card { padding: var(--sp-xl) var(--sp-lg); }
+  .chip { min-width: 72px; }
+  .chip .num { font-size: 22px; }
+}
+
+/* --- Reduced motion (threejs-3d + accessibility rules) --- */
+@media (prefers-reduced-motion: reduce) {
+  .fade-up { animation: none; opacity: 1; transform: none; }
+  .popup, .popup-card { transition: none; }
+  .popup-heart { animation: none; }
+  .digits.shake { animation: none; }
+}
+
+
+

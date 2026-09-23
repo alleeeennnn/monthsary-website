@@ -1,0 +1,11 @@
+.cline/
+deploy/
+standalone.html
+standalone-template.html
+monthsary-site.zip
+deploy-codesandbox.ps1
+assemble-and-upload.ps1
+github-deploy.ps1
+upload-result.txt
+deploy-result.txt
+github-deploy-result.txt

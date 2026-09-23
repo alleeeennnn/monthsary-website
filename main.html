@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Monthsary, My Baby</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <canvas id="scene" aria-hidden="true"></canvas>
+
+  <main class="hero">
+    <p class="eyebrow fade-up">Since January 24, 2026 · &amp; counting</p>
+
+    <h1 class="display fade-up d1">
+      Happy <span id="months-num">—</span> Monthsary,<br />
+      <span class="romantic">My Baby!</span>
+    </h1>
+
+    <p class="sub fade-up d2">
+      Every month with you feels like the first one.
+      Here is our time together,  still counting, always counting < 3
+    </p>
+
+    <div class="counter fade-up d3" role="timer" aria-label="Time together">
+      <div class="chip"><span class="num" id="c-days">0</span><span class="label">Days</span></div>
+      <div class="chip"><span class="num" id="c-hours">0</span><span class="label">Hours</span></div>
+      <div class="chip"><span class="num" id="c-mins">0</span><span class="label">Minutes</span></div>
+      <div class="chip"><span class="num" id="c-secs">0</span><span class="label">Seconds</span></div>
+    </div>
+
+    <section class="letter glass fade-up d4" aria-label="A letter for Diana">
+      <h3><span class="romantic">A letter for you,</span> my one and only Diana</h3>
+      <p>
+        Hello baby! Ang bilis ano, 7 months na tayo together. I just want to say thank you for everyhing,
+        For all the love and care na binibigay mo sa akin, because of what you're giving me, i felt loved and appreciated.
+        Thank you for choosing me on the good days, the hard days, and all the ordinary days in between.
+      </p>
+      <p>
+        You deserved everything you have and what you'll have in the future, i will always be here baby to support
+        you no matter what happens. I love you so much baby, Happy 8th Monthsary to us, Baby!
+      </p>
+      <p class="sign">I love you, baby.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p class="fine-print">Made with all my heart 💖 · 01.24.26 → forever · Happy Monthsary, Baby</p>
+  </footer>
+  <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+  <script src="assets/js/scene.js"></script>
+  <script>
+    /* 3D celebration scene is OPTIONAL decoration — isolated so page content
+       and the counter always work even if WebGL/CDN fails */
+    try {
+      createAmbientScene(document.getElementById('scene'), {
+        hearts: 90,
+        particles: 380,
+        dim: false
+      });
+    } catch (e) { /* gradient fallback stays visible */ }
+  </script>
+  <script>
+    /* ---- Relationship data ---- */
+    const START = new Date(2026, 0, 24); /* January 24, 2026 */
+
+    /* Monthsary counter — the number flips on the EVENING BEFORE the
+       monthsary, so it already celebrates on the 23rd (e.g., shows 8 on
+       both Sep 23 and Sep 24 for a Jan 24 start). */
+    function monthsTogether(now) {
+      let months = (now.getFullYear() - START.getFullYear()) * 12
+                 + (now.getMonth() - START.getMonth());
+      if (now.getDate() < START.getDate() - 1) months -= 1;
+      return Math.max(0, months);
+    }
+
+    const numEl = document.getElementById('months-num');
+    function renderMonths() {
+      const n = monthsTogether(new Date());
+      numEl.textContent = String(n);
+      document.title = `Happy ${n} Monthsary, My Baby Diana 💖`;
+    }
+    renderMonths();
+
+    /* ---- Live "time together" counter ---- */
+    const dEl = document.getElementById('c-days');
+    const hEl = document.getElementById('c-hours');
+    const mEl = document.getElementById('c-mins');
+    const sEl = document.getElementById('c-secs');
+
+    function tickCounter() {
+      const now = new Date();
+      renderMonths(); /* keeps the headline correct if monthsary flips at midnight */
+
+      let diff = Math.max(0, now - START);
+      const days = Math.floor(diff / 86400000); diff -= days * 86400000;
+      const hours = Math.floor(diff / 3600000); diff -= hours * 3600000;
+      const mins = Math.floor(diff / 60000); diff -= mins * 60000;
+      const secs = Math.floor(diff / 1000);
+
+      dEl.textContent = days.toLocaleString();
+      hEl.textContent = String(hours).padStart(2, '0');
+      mEl.textContent = String(mins).padStart(2, '0');
+      sEl.textContent = String(secs).padStart(2, '0');
+    }
+    tickCounter();
+    setInterval(tickCounter, 1000);
+  </script>
+
+</body>
+</html>

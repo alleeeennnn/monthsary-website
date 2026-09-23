@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For My Baby Diana </title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💖</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <canvas id="scene" aria-hidden="true"></canvas>
+
+  <main class="lock-wrap">
+    <section class="lock-card glass fade-up" aria-label="Unlock screen">
+      <p class="eyebrow">A little surprise </p>
+      <h1>For My Baby <span class="romantic">Diana</span></h1>
+      <p class="lock-sub">Unlock this to see my first gift.<br />
+        <span class="clue">Clue: What's the date tomorrow? </span></p>
+
+      <div class="digits" id="digits" role="group" aria-label="6-digit passcode">
+        <span class="digit"></span>
+        <span class="digit"></span>
+        <span class="digit"></span>
+        <span class="digit"></span>
+        <span class="digit"></span>
+        <span class="digit"></span>
+      </div>
+
+      <div class="keypad" id="keypad" aria-label="Passcode keypad">
+        <button class="key" data-key="1">1</button>
+        <button class="key" data-key="2">2</button>
+        <button class="key" data-key="3">3</button>
+        <button class="key" data-key="4">4</button>
+        <button class="key" data-key="5">5</button>
+        <button class="key" data-key="6">6</button>
+        <button class="key" data-key="7">7</button>
+        <button class="key" data-key="8">8</button>
+        <button class="key" data-key="9">9</button>
+        <button class="key util" data-key="clear" aria-label="Clear">C</button>
+        <button class="key" data-key="0">0</button>
+        <button class="key util" data-key="back" aria-label="Delete">⌫</button>
+      </div>
+    </section>
+
+    <p class="fine-print fade-up d2">Made with all my heart 💖</p>
+  </main>
+
+  <!-- Success popup -->
+  <div class="popup" id="popup" role="dialog" aria-modal="true" aria-labelledby="popup-title">
+    <div class="popup-card glass">
+      <div class="popup-heart" aria-hidden="true">💖</div>
+      <h2 id="popup-title">Happy Monthsary, Baby!</h2>
+      <p>Unlocking your gift…</p>
+      <button class="btn" id="open-gift">Open My Gift 💝</button>
+    </div>
+  </div>
+  <script src="https://unpkg.com/three@0.152.2/build/three.min.js"></script>
+  <script src="assets/js/scene.js"></script>
+  <script>
+    /* 3D ambience is OPTIONAL decoration — isolated so it can never block the lock */
+    try {
+      createAmbientScene(document.getElementById('scene'), {
+        hearts: 0,
+        particles: 240,
+        dim: true
+      });
+    } catch (e) { /* gradient fallback stays visible */ }
+  </script>
+  <script>
+    /* Lock logic — fully independent of the 3D scene */
+    const CORRECT_CODE = '092426';
+    const buffer = [];
+    const digitsEl = document.getElementById('digits');
+    const boxes = digitsEl.querySelectorAll('.digit');
+    const popup = document.getElementById('popup');
+    let unlocked = false;
+
+    function render() {
+      boxes.forEach((box, i) => {
+        box.textContent = buffer[i] !== undefined ? '●' : '';
+        box.classList.toggle('filled', i < buffer.length);
+      });
+    }
+
+    function success() {
+      unlocked = true;
+      render();
+      setTimeout(() => {
+        popup.classList.add('show');
+        /* Auto-proceed to the main page (button can skip the wait) */
+        setTimeout(() => { window.location.href = 'main.html'; }, 3500);
+      }, 250);
+    }
+
+    function fail() {
+      digitsEl.classList.add('shake');
+      setTimeout(() => {
+        digitsEl.classList.remove('shake');
+        buffer.length = 0;
+        render();
+      }, 550);
+    }
+
+    function press(key) {
+      if (unlocked) return;
+      if (key === 'clear') { buffer.length = 0; render(); return; }
+      if (key === 'back') { buffer.pop(); render(); return; }
+      if (!/^[0-9]$/.test(key) || buffer.length >= 6) return;
+      buffer.push(key);
+      render();
+      if (buffer.length === 6) {
+        buffer.join('') === CORRECT_CODE ? success() : fail();
+      }
+    }
+
+    document.getElementById('keypad').addEventListener('click', (e) => {
+      const btn = e.target.closest('.key');
+      if (btn) press(btn.dataset.key);
+    });
+
+    /* Physical keyboard support */
+    window.addEventListener('keydown', (e) => {
+      if (/^[0-9]$/.test(e.key)) press(e.key);
+      else if (e.key === 'Backspace') press('back');
+      else if (e.key === 'Escape') press('clear');
+    });
+
+    document.getElementById('open-gift').addEventListener('click', () => {
+      window.location.href = 'main.html';
+    });
+  </script>
+
+</body>
+</html>
